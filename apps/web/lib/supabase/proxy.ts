@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { redirectUrl } from '@/lib/request-url'
 
 const PUBLIC_PATHS = ['/login', '/auth']
 
@@ -40,15 +41,14 @@ export async function updateSession(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   const path = request.nextUrl.pathname
 
+  // redirectUrl 을 쓰는 이유는 lib/request-url.ts 주석 참조.
+  // nextUrl.clone() 을 쓰면 호스트가 localhost 로 정규화돼서 127.0.0.1 로 들어온 사용자가
+  // 쿠키를 잃고 /login ↔ / 사이를 무한 바운스한다.
   if (!user && !isPublic(path)) {
-    const url = request.nextUrl.clone()
-    url.pathname = '/login'
-    return NextResponse.redirect(url)
+    return NextResponse.redirect(redirectUrl(request, '/login'))
   }
   if (user && path === '/login') {
-    const url = request.nextUrl.clone()
-    url.pathname = '/'
-    return NextResponse.redirect(url)
+    return NextResponse.redirect(redirectUrl(request, '/'))
   }
 
   return response

@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import type { EmailOtpType } from '@supabase/supabase-js'
 import { createClient } from '@/lib/supabase/server'
+import { redirectUrl } from '@/lib/request-url'
 
 /**
  * 매직링크 착지점. PKCE(`?code=` + exchangeCodeForSession)가 아니라 token-hash 플로우다.
@@ -20,9 +21,10 @@ export async function GET(request: NextRequest) {
   if (token_hash && type) {
     const supabase = await createClient()
     const { error } = await supabase.auth.verifyOtp({ type, token_hash })
-    if (!error) return NextResponse.redirect(new URL('/', request.url))
+    // redirectUrl 을 쓰는 이유는 그 파일의 주석 참조 — request.url 로 만들면 쿠키가 유실된다.
+    if (!error) return NextResponse.redirect(redirectUrl(request, '/'))
   }
 
   // 만료됐거나 이미 쓴 링크. 이유를 알려준다 — 조용히 폼으로 되돌리면 사용자는 영문을 모른다.
-  return NextResponse.redirect(new URL('/login?e=expired', request.url))
+  return NextResponse.redirect(redirectUrl(request, '/login', '?e=expired'))
 }
