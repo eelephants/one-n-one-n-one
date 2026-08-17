@@ -15,9 +15,12 @@
     "typecheck": "tsc --noEmit && npm -w apps/web run typecheck",
     "db:types": "supabase gen types typescript --local > packages/domain/src/database.types.ts",
     "login-link": "node scripts/login-link.mjs",
-    "seed-history": "node scripts/seed-history.mjs"
+    "seed-history": "node scripts/seed-history.mjs",
+    "test:e2e": "playwright test",
+    "check-key-leak": "node scripts/check-key-leak.mjs"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.1",
     "@supabase/supabase-js": "^2.95.1",
     "supabase": "^2.60.7",
     "typescript": "^5",
