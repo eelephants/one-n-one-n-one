@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
-  SESSION_MS, elapsedMinutes, formatRemaining, minutesOf, monthCells, remainingMs,
-  serviceDateKST, shiftDay, streak, todayState, totalMinutes, type Session,
+  SESSION_MS, elapsedMinutes, formatRemaining, grassLevel, minutesOf, monthCells, remainingMs,
+  serviceDateKST, shiftDay, shiftMonthKey, streak, todayState, totalMinutes, type Session,
 } from './index'
 
 const session = (o: Partial<Session>): Session => ({
@@ -112,6 +112,24 @@ describe('todayState — 화면 A/B/C 판정', () => {
   })
 })
 
+describe('grassLevel — 완주와 중단을 구별해야 한다', () => {
+  it('기록이 없으면 0', () => {
+    expect(grassLevel(0)).toBe(0)
+  })
+  it('60 분을 채우면 2', () => {
+    expect(grassLevel(60)).toBe(2)
+  })
+  it('46 분 중단과 60 분 완주가 같은 단계면 안 된다', () => {
+    // 초안의 Math.ceil(minutes/15) 는 둘 다 4단계였다. 이 앱이 구별하려는 단 하나가 이것이다.
+    expect(grassLevel(46)).not.toBe(grassLevel(60))
+    expect(grassLevel(46)).toBe(1)
+  })
+  it('1 분도 59 분도 같은 "부분" 단계다', () => {
+    expect(grassLevel(1)).toBe(1)
+    expect(grassLevel(59)).toBe(1)
+  })
+})
+
 describe('streak / shiftDay / monthCells', () => {
   it('shiftDay 는 월 경계를 넘는다', () => {
     expect(shiftDay('2026-03-01', -1)).toBe('2026-02-28')
@@ -130,6 +148,12 @@ describe('streak / shiftDay / monthCells', () => {
   it('기록이 없으면 0', () => {
     expect(streak([], '2026-08-17')).toBe(0)
   })
+  it('shiftMonthKey 는 연 경계를 넘는다', () => {
+    expect(shiftMonthKey('2026-01', -1)).toBe('2025-12')
+    expect(shiftMonthKey('2026-12', 1)).toBe('2027-01')
+    expect(shiftMonthKey('2026-08', -1)).toBe('2026-07')
+  })
+
   it('monthCells 는 그 달의 날짜를 전부 준다', () => {
     expect(monthCells(2026, 2)).toHaveLength(28)
     expect(monthCells(2024, 2)).toHaveLength(29)

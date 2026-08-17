@@ -92,6 +92,7 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      lifetime_stats: { Args: never; Returns: Json }
       start_session: {
         Args: { p_title: string }
         Returns: {

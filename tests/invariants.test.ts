@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it } from 'vitest'
-import { serviceDateKST } from '@onehour/domain'
+import { serviceDateKST, totalMinutes } from '@onehour/domain'
 import {
   admin, anonClient, inTodayServiceDay, makeUser, minutesAgo, seedSession,
 } from './helpers/supabase'
@@ -321,6 +321,39 @@ describe('INV-5: 기록은 클라이언트로부터 불변', () => {
     await u.client.rpc('start_session', { p_title: '한 번만' })
     expect((await u.client.rpc('finish_session')).error).toBeNull()
     expect((await u.client.rpc('finish_session')).error?.message).toContain('no_running_session')
+  })
+})
+
+describe('lifetime_stats — SQL 과 TS 가 같은 분 계산을 해야 한다', () => {
+  it('totalMinutes() 와 값이 일치하고, 400 행 창에 잘리지 않는다', async () => {
+    const u = await makeUser()
+    // 서로 다른 서비스일에 여러 건. 20 초짜리(=1분으로 올림돼야 함)를 섞는다.
+    const seeds = [
+      { daysAgo: 1, seconds: 20 },
+      { daysAgo: 2, seconds: 23 * 60 },
+      { daysAgo: 3, seconds: 3600 },
+      { daysAgo: 4, seconds: 37 * 60 + 29 },
+    ]
+    for (const s of seeds) {
+      const started = new Date(Date.now() - s.daysAgo * 24 * HOUR).toISOString()
+      await seedSession(u.id, {
+        started_at: started,
+        status: s.seconds >= 3600 ? 'completed' : 'stopped',
+        finished_at: new Date(Date.parse(started) + s.seconds * 1000).toISOString(),
+      })
+    }
+
+    const { data, error } = await u.client.rpc('lifetime_stats')
+    expect(error).toBeNull()
+
+    const { data: rows } = await u.client.from('sessions')
+      .select('started_at,finished_at').not('finished_at', 'is', null)
+    expect(data.total_minutes).toBe(totalMinutes(rows!))
+    expect(data.active_days).toBe(seeds.length)
+  })
+
+  it('anon 은 호출할 수 없다', async () => {
+    expect((await anonClient().rpc('lifetime_stats')).error).not.toBeNull()
   })
 })
 

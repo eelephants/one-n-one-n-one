@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation'
 import { todayState } from '@onehour/domain'
+import { Nav } from '@/components/Nav'
 import { RecordList } from '@/components/RecordList'
 import { Timer } from '@/components/Timer'
 import { TodayDone } from '@/components/TodayDone'
@@ -30,6 +31,7 @@ export default async function TodayPage() {
   const state = running ? todayState([running], nowMs) : todayState(sessions, nowMs)
 
   return (
+    <>
     <main
       key={state}
       tabIndex={-1}
@@ -61,5 +63,8 @@ export default async function TodayPage() {
           따라서 C 는 오늘의 확정된 행들만 보면 된다. */}
       {state === 'C' && <TodayDone sessions={sessions} nowMs={nowMs} />}
     </main>
+    {/* 화면 B 에는 nav 를 그리지 않는다 — "다른 건 아무것도 없다"(스펙). */}
+    {state !== 'B' && <Nav current="/" />}
+    </>
   )
 }

@@ -14,7 +14,8 @@
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit && npm -w apps/web run typecheck",
     "db:types": "supabase gen types typescript --local > packages/domain/src/database.types.ts",
-    "login-link": "node scripts/login-link.mjs"
+    "login-link": "node scripts/login-link.mjs",
+    "seed-history": "node scripts/seed-history.mjs"
   },
   "devDependencies": {
     "@supabase/supabase-js": "^2.95.1",

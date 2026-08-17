@@ -96,6 +96,24 @@ export function streak(activeDates: Iterable<string>, today: string): number {
   return n
 }
 
+/**
+ * 잔디 단계. 그라데이션이 아니라 **상태**를 인코딩한다.
+ *
+ * 초안은 `Math.ceil(minutes / 15)` 로 5단계를 만들었는데, 실제 구간이
+ * 1–15 / 16–30 / 31–45 / **46–60** 이라 46분 중단과 60분 완주가 같은 색이었다.
+ * 이 앱이 구별하려는 단 하나가 완주 vs 중단인데 잔디가 그걸 못 하면 잔디가 틀린 것이다.
+ */
+export function grassLevel(minutes: number): 0 | 1 | 2 {
+  if (minutes <= 0) return 0
+  return minutes >= 60 ? 2 : 1
+}
+
+/** 'YYYY-MM' 월 이동. shiftDay 와 같은 이유로 순수 문자열 산술이다. */
+export function shiftMonthKey(ym: string, delta: number): string {
+  const [y = NaN, m = NaN] = ym.split('-').map(Number)
+  return new Date(Date.UTC(y, m - 1 + delta, 1)).toISOString().slice(0, 7)
+}
+
 /** month 는 1-indexed. */
 export function monthCells(year: number, month: number): string[] {
   const days = new Date(Date.UTC(year, month, 0)).getUTCDate()
