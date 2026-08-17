@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Supabase CLI 런타임 산출물 (edge runtime 번들). 우리 코드가 아니다.
+    "supabase/.temp/**",
+    // supabase gen types 생성물
+    "lib/database.types.ts",
   ]),
 ]);
 
