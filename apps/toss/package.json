@@ -13,7 +13,8 @@
     "@granite-js/native": "1.0.42",
     "brick-module": "0.5.1",
     "react": "19.2.3",
-    "react-native": "0.84.0"
+    "react-native": "0.84.0",
+    "@onehour/domain": "*"
   },
   "devDependencies": {
     "@babel/core": "7.28.5",

@@ -72,9 +72,15 @@ export function todayState(rows: Session[], nowMs: number): 'A' | 'B' | 'C' {
   return rows.length >= 2 ? 'C' : 'A'
 }
 
-/** 'YYYY-MM-DD' 달력 산술. service_date 는 순수 날짜라 타임존이 개입하지 않는다. */
+/**
+ * 'YYYY-MM-DD' 달력 산술. service_date 는 순수 날짜라 타임존이 개입하지 않는다.
+ *
+ * 기본값 NaN 은 캐스팅을 피하기 위한 정직한 표현이다 — 자리가 비면 Number(undefined) 도
+ * 어차피 NaN 이고, 형식이 깨진 입력은 toISOString() 에서 즉시 던진다.
+ * 조용히 이상한 날짜를 만들어 잔디와 연속 일수를 망가뜨리는 것보다 낫다.
+ */
 export function shiftDay(ymd: string, days: number): string {
-  const [y, m, d] = ymd.split('-').map(Number)
+  const [y = NaN, m = NaN, d = NaN] = ymd.split('-').map(Number)
   return new Date(Date.UTC(y, m - 1, d + days)).toISOString().slice(0, 10)
 }
 

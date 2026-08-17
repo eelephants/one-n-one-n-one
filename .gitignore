@@ -48,3 +48,6 @@ next-env.d.ts
 
 # 환경변수 템플릿은 커밋한다 (값 없음)
 !.env.local.example
+
+# Granite 번들 산출물
+apps/toss/dist/

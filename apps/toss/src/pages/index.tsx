@@ -1,104 +1,33 @@
 import { createRoute } from '@granite-js/react-native';
 import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
+import { formatRemaining, serviceDateKST, SESSION_MS } from '@onehour/domain';
 
 export const Route = createRoute('/', {
   component: Page,
 });
 
+/**
+ * 모노레포 해석 확인용 임시 화면.
+ * @onehour/domain 은 SQL 생성 컬럼의 TS 미러이므로 웹과 미니앱이 반드시 같은 소스를 써야 한다.
+ * Metro 가 워크스페이스 밖 심볼릭 링크를 따라가는지를 여기서 확정한다.
+ */
 function Page() {
-  const navigation = Route.useNavigation();
-
-  const goToAboutPage = () => {
-    navigation.navigate('/about');
-  };
+  const today = serviceDateKST(new Date());
+  const full = formatRemaining(SESSION_MS);
 
   return (
-    <Container>
-      <Text style={styles.title}>🎉 Welcome! 🎉</Text>
-      <Text style={styles.subtitle}>
-        This is a demo page for the <Text style={styles.brandText}>Granite</Text> Framework.
-      </Text>
-      <Text style={styles.description}>This page was created to showcase the features of the Granite.</Text>
-      <TouchableOpacity style={styles.button} onPress={goToAboutPage}>
-        <Text style={styles.buttonText}>Go to About Page</Text>
-      </TouchableOpacity>
-    </Container>
+    <View style={styles.container}>
+      <Text style={styles.title}>하루에 하나씩</Text>
+      <Text style={styles.mono}>{full}</Text>
+      <Text style={styles.caption}>서비스일 {today}</Text>
+    </View>
   );
 }
 
-function Container({ children }: { children: React.ReactNode }) {
-  return <View style={styles.container}>{children}</View>;
-}
-
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: 'white',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  brandText: {
-    color: '#0064FF',
-    fontWeight: 'bold',
-  },
-  text: {
-    fontSize: 24,
-    color: '#202632',
-    textAlign: 'center',
-    marginBottom: 10,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#1A202C',
-    textAlign: 'center',
-    marginBottom: 16,
-  },
-  subtitle: {
-    fontSize: 18,
-    color: '#4A5568',
-    textAlign: 'center',
-    marginBottom: 24,
-  },
-  description: {
-    fontSize: 16,
-    color: '#718096',
-    textAlign: 'center',
-    marginBottom: 32,
-    lineHeight: 24,
-  },
-  button: {
-    backgroundColor: '#0064FF',
-    paddingVertical: 12,
-    paddingHorizontal: 32,
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  codeContainer: {
-    padding: 8,
-    backgroundColor: '#333',
-    borderRadius: 4,
-    width: '100%',
-  },
-  code: {
-    color: 'white',
-    fontFamily: 'monospace',
-    letterSpacing: 0.5,
-    fontSize: 14,
-  },
+  container: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12 },
+  title: { fontSize: 20, color: '#171717' },
+  mono: { fontSize: 48, fontVariant: ['tabular-nums'], color: '#171717' },
+  caption: { fontSize: 13, color: '#737373' },
 });

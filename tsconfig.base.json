@@ -4,6 +4,9 @@
     "lib": ["ES2022"],
     "skipLibCheck": true,
     "strict": true,
+    // Granite(apps/toss) 이 이 플래그를 켜고 있다. 공유 패키지가 한쪽에서만 통과하면
+    // 안 되므로 엄격한 쪽으로 통일한다 — shiftDay 의 실제 결함을 이게 잡았다.
+    "noUncheckedIndexedAccess": true,
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",

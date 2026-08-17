@@ -19,6 +19,7 @@ export default function setup() {
   }
   for (const line of out.split('\n')) {
     const m = /^([A-Z_]+)="?(.*?)"?$/.exec(line.trim())
-    if (m) process.env[m[1]] = m[2]
+    const [, key, value] = m ?? []
+    if (key) process.env[key] = value ?? ''
   }
 }
