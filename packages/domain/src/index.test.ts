@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   SESSION_MS, elapsedMinutes, formatRemaining, minutesOf, monthCells, remainingMs,
   serviceDateKST, shiftDay, streak, todayState, totalMinutes, type Session,
-} from '@/lib/domain'
+} from './index'
 
 const session = (o: Partial<Session>): Session => ({
   id: 'x', title: '일', started_at: '2026-08-17T01:00:00.000Z', finished_at: null,

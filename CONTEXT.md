@@ -3,7 +3,19 @@
 하루에 딱 하나의 일을, 한 시간 동안만 하는 루틴 앱.
 해결책은 기능이 아니라 **제약**이고, 제약은 UI 조건문이 아니라 DB 제약으로 강제한다.
 
-- **스펙 · 불변 규칙 · 설계 결정(D0–D10) · 엣지 케이스**: [`docs/spec.md`](docs/spec.md)
+**두 곳에 배포한다.** 공개 웹(Next.js, 이메일 로그인) + 앱인토스 미니앱(Granite RN, 토스 로그인).
+백엔드는 Supabase 하나이고, 규칙은 전부 DB 에 있다.
+
+```
+one-n-one-n-one/            npm workspaces (Turborepo·Nx 안 씀 — 필요 없다)
+├── packages/domain/        순수 함수. SQL 생성 컬럼의 TS 미러이므로 복사 금지, 공유해야 한다
+├── apps/web/               Next.js — 공개 웹 + 토스 토큰 교환 API
+├── apps/toss/              Granite RN 미니앱 (예정)
+├── supabase/               마이그레이션 · RLS · RPC. 클라이언트 무관
+└── tests/                  불변 규칙 테스트 (PostgREST 경유 = 공격자와 같은 경로)
+```
+
+- **스펙 · 불변 규칙 · 설계 결정(D0–D14) · 앱인토스 제약(T1–T8) · 엣지 케이스**: [`docs/spec.md`](docs/spec.md)
 - **구현 계획 (태스크 16개)**: [`docs/superpowers/plans/2026-08-17-one-hour-a-day.md`](docs/superpowers/plans/2026-08-17-one-hour-a-day.md)
 - **리뷰 근거**: `.dev-flow/autoplan.md` (gitignored)
 

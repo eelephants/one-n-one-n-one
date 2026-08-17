@@ -1,5 +1,5 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
-import { serviceDateKST } from '@/lib/domain'
+import { serviceDateKST } from '@onehour/domain'
 
 function env(key: string): string {
   const v = process.env[key]

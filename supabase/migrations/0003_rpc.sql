@@ -1,12 +1,12 @@
 -- 세션의 생성·종료가 일어나는 유일한 경로.
 -- 모든 definer 함수는 search_path 를 고정하고 스키마를 명시한다 (spec E10).
 
--- ⚠ Supabase 는 부트스트랩에서
---   alter default privileges for role postgres in schema public
---     grant all on functions to postgres, anon, authenticated, service_role;
--- 을 실행한다. 이건 PUBLIC 유사롤이 아니라 **명시적 role grant** 라서
--- `revoke ... from public` 으로는 지워지지 않는다. 기본값을 먼저 끄고,
--- 이후 모든 revoke 에 롤 이름을 명시한다.
+-- ⚠ Supabase 버전에 따라 public 스키마의 신규 함수가 anon/authenticated 에게 자동으로
+-- EXECUTE 되어 있을 수 있다 (레거시 auto_expose_new_tables 동작). 그 grant 는 PUBLIC
+-- 유사롤이 아니라 명시적 role grant 라서 `revoke ... from public` 으로는 안 지워진다.
+-- 최신 CLI 는 자동 노출을 안 하지만, 어느 쪽이든 맞게 동작하도록 기본값을 끄고
+-- 모든 revoke 에 롤 이름을 명시한다. 노출 여부는 테스트로 검증한다
+-- (`anon 키로는 어떤 RPC 도 실행할 수 없다`).
 alter default privileges in schema public revoke execute on functions from anon, authenticated;
 
 -- ── 만료 세션 지연 확정 ────────────────────────────────────────────────

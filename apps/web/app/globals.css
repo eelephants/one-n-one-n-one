@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+/*
+ * 다크 모드 토글은 범위 밖이지만(spec), 다크 렌더링은 prefers-color-scheme 로 자동 발생한다.
+ * 컴포넌트 색이 전부 라이트 고정이라 그냥 두면 히스토리 잔디가 의미상 반전된다
+ * (빈 칸이 흰 블록이 되고 채운 칸이 배경에 묻힌다).
+ * 라이트로 못박는다. 진짜 다크 팔레트를 만들 때 여기서 풀면 된다.
+ */
+:root {
+  color-scheme: light;
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}

@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it } from 'vitest'
-import { serviceDateKST } from '@/lib/domain'
+import { serviceDateKST } from '@onehour/domain'
 import {
   admin, anonClient, inTodayServiceDay, makeUser, minutesAgo, seedSession,
 } from './helpers/supabase'

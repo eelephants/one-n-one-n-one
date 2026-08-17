@@ -2,31 +2,22 @@
   "name": "one-n-one-n-one",
   "version": "0.1.0",
   "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint",
+    "dev": "npm -w apps/web run dev",
+    "build": "npm -w apps/web run build",
+    "lint": "npm -w apps/web run lint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc --noEmit"
-  },
-  "dependencies": {
-    "@supabase/ssr": "^0.12.4",
-    "@supabase/supabase-js": "^2.112.3",
-    "next": "16.3.1",
-    "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "typecheck": "tsc --noEmit && npm -w apps/web run typecheck",
+    "db:types": "supabase gen types typescript --local > packages/domain/src/database.types.ts"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.3.1",
-    "supabase": "^2.114.0",
-    "tailwindcss": "^4",
+    "@supabase/supabase-js": "^2.95.1",
+    "supabase": "^2.60.7",
     "typescript": "^5",
     "vitest": "^4.1.10"
   }

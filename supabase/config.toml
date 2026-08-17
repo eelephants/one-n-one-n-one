@@ -156,11 +156,11 @@ max_indexes = 5
 enabled = true
 # The base URL of your website. Used as an allow-list for redirects and for constructing URLs used
 # in emails.
-site_url = "http://127.0.0.1:3000"
+site_url = "http://127.0.0.1:3100"
 # The public URL that Auth serves on. Defaults to the API external URL with `/auth/v1` appended.
 # external_url = ""
 # A list of *exact* URLs that auth providers are permitted to redirect to post authentication.
-additional_redirect_urls = ["https://127.0.0.1:3000"]
+additional_redirect_urls = ["http://127.0.0.1:3100", "http://localhost:3100"]
 # How long tokens are valid for, in seconds. Defaults to 3600 (1 hour), maximum 604,800 (1 week).
 jwt_expiry = 3600
 # JWT issuer URL. If not set, defaults to auth.external_url.
@@ -242,6 +242,19 @@ otp_expiry = 3600
 # pass = "env(SENDGRID_API_KEY)"
 # admin_email = "admin@email.com"
 # sender_name = "Admin"
+
+# 매직링크는 token-hash 플로우를 쓴다. 기본 템플릿의 {{ .ConfirmationURL }} 은 GoTrue 의
+# /verify 를 거쳐 PKCE(?code=) 또는 implicit(#access_token=) 으로 떨어지는데, 전자는
+# 기기에 묶이고 후자는 서버에서 읽을 수 없다. {{ .TokenHash }} 로 우리 라우트를 직접 가리킨다.
+# ⚠ 프로덕션 Supabase 대시보드의 이메일 템플릿도 동일하게 바꿔야 한다 (Phase 5).
+[auth.email.template.magic_link]
+subject = "하루에 하나씩 로그인 링크"
+content_path = "./supabase/templates/magic_link.html"
+
+# signInWithOtp 는 신규 사용자에게 magic_link 가 아니라 confirmation 템플릿을 보낸다.
+[auth.email.template.confirmation]
+subject = "하루에 하나씩 시작하기"
+content_path = "./supabase/templates/confirmation.html"
 
 # Uncomment to customize email template
 # [auth.email.template.invite]
