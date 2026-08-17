@@ -172,8 +172,11 @@ enable_refresh_token_rotation = true
 # Allows refresh tokens to be reused after expiry, up to the specified interval in seconds.
 # Requires enable_refresh_token_rotation = true.
 refresh_token_reuse_interval = 10
-# Allow/disallow new user signups to your project.
-enable_signup = true
+# 신규 가입 차단. 저장소가 public 이고 Hobby 플랜은 프로덕션 URL 에 Vercel Authentication 을
+# 걸 수 없어서, URL 을 아는 누구나 가입하는 것을 막는 유일한 방어선이 여기다.
+# 계정은 service_role 로 만든다: npm run create-owner -- me@example.com
+# 나중에 사람을 받으려면 이 한 줄만 true 로 바꾼다.
+enable_signup = false
 # Allow/disallow anonymous sign-ins to your project.
 enable_anonymous_sign_ins = false
 # Allow/disallow testing manual linking of accounts
@@ -217,7 +220,9 @@ web3 = 30
 # secret = ""
 
 [auth.email]
-# Allow/disallow new user signups via email to your project.
+# ⚠ 여기를 false 로 두면 이메일 **로그인 자체**가 꺼진다 (email_provider_disabled).
+# 기존 사용자도 못 들어오고 signInWithPassword 도 막혀서 불변 규칙 테스트 32 개가 깨졌다.
+# 신규 가입 차단은 위 [auth].enable_signup 하나로 충분하다. 여기는 true 로 둔다.
 enable_signup = true
 # If enabled, a user will be required to confirm any email change on both the old, and new email
 # addresses. If disabled, only the new email is required to confirm.

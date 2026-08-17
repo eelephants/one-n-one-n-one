@@ -40,14 +40,22 @@ Authentication → URL Configuration:
 
 ## 2. 공개 웹 (Vercel)
 
-모노레포이므로 프로젝트 설정이 중요하다.
+모노레포지만 추가 설정은 필요 없었다. 실측으로 확인함 (빌드 21초, TypeScript 통과 = 루트 밖
+`packages/domain` 해석 성공).
 
 | 항목 | 값 |
 |---|---|
 | Root Directory | `apps/web` |
-| Include files outside root directory | **켠다** (`packages/domain` 이 필요하다) |
-| Install Command | `npm install --workspaces --include-workspace-root` (기본값으로 안 되면) |
-| Build Command | 기본 (`next build`) |
+| Include files outside root directory | 건드리지 않음 — 기본값으로 `packages/domain` 이 잡힌다 |
+| Install / Build Command | 기본값 |
+
+현재 프로젝트: `prj_41RI5Gb3N3fEti3StgsrniUO7LjL` (team `sangchokims-projects`)
+
+### 접근 보호
+
+Hobby 플랜은 **프로덕션 URL 에 Vercel Authentication 을 걸 수 없다** (프리뷰만 가능).
+저장소가 public 이므로 프로덕션의 실질적 방어선은 **Supabase 신규 가입 차단**이다.
+`supabase/config.toml` 의 `[auth] enable_signup = false` 를 프로덕션 대시보드에도 반영할 것.
 
 환경변수:
 

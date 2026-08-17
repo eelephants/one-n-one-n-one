@@ -17,7 +17,8 @@
     "login-link": "node scripts/login-link.mjs",
     "seed-history": "node scripts/seed-history.mjs",
     "test:e2e": "playwright test",
-    "check-key-leak": "node scripts/check-key-leak.mjs"
+    "check-key-leak": "node scripts/check-key-leak.mjs",
+    "create-owner": "node scripts/create-owner.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.62.1",
