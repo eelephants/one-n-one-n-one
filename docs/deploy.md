@@ -8,22 +8,15 @@
 
 ```bash
 npx supabase link --project-ref <PROJECT_REF>
-npx supabase db push
+npm run db:push:api
 ```
 
-### 이메일 템플릿 — 반드시 바꿔야 한다
-
-로컬은 `supabase/templates/*.html` 로 설정돼 있지만 **호스티드 프로젝트는 대시보드에서 따로 바꿔야 한다.**
-안 바꾸면 기본 템플릿의 `{{ .ConfirmationURL }}` 이 PKCE(`?code=`) 나 implicit(`#access_token=`) 로
-떨어지고, 우리 `/auth/confirm` 은 `token_hash` 를 읽으므로 **로그인이 조용히 실패한다.**
-
-Authentication → Email Templates 에서 **Magic Link** 와 **Confirm signup** 둘 다:
-
-```html
-<a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=magiclink">로그인하기</a>
-```
-
-(Confirm signup 은 `type=signup`)
+> `supabase db push` 는 이 환경에서 쓸 수 없었다. pooler 의 5432 와 6543 이 **둘 다**
+> `ECONNREFUSED` 였다 — Network Restrictions 는 `0.0.0.0/0` 전체 허용이고 프로젝트도
+> ACTIVE_HEALTHY 였으므로 클라이언트 쪽 아웃바운드 차단으로 보인다(에러 메시지의
+> "local IP 를 허용하라"는 힌트는 틀린 방향이다). 무료 플랜은 직접 연결이 IPv6 전용이라
+> 대안이 못 된다. 그래서 `db:push:api` 가 Management API(443)로 SQL 을 실행하고
+> 마이그레이션 이력 테이블에도 기록한다.
 
 ### SMTP — 두 가지가 여기 걸려 있다
 
@@ -53,9 +46,14 @@ npm run push-templates
 
 ### URL 설정
 
-Authentication → URL Configuration:
-- Site URL: `https://<도메인>`
-- Redirect URLs: `https://<도메인>/auth/confirm`
+`supabase config push` 는 무료 티어에서 auth 전체를 한 번에 보내다가 템플릿 때문에 거부된다.
+필요한 항목만 Management API 로 넣는 게 확실하다 (이미 적용됨):
+
+```
+site_url       = https://one-n-one-n-one.vercel.app
+uri_allow_list = <site>, <site>/auth/callback, <site>/auth/confirm
+disable_signup = true
+```
 
 ---
 
@@ -135,3 +133,27 @@ cd apps/toss && npm run build   # dist/*.ait
 ```
 
 **화면 검증은 토스 샌드박스 앱에서만 가능하다** (spec D14). 자동 검증은 타입체크·빌드까지다.
+
+
+---
+
+## 알아둘 함정
+
+### git push 가 403 이 날 때
+
+이 머신에는 GitHub 계정이 둘 로그인돼 있고(`SangchoKim`, `sangcho-kim`), 활성 계정이
+바뀌면 `eelephants` 저장소에 push 권한이 없어 403 이 난다. keychain 자격증명이 굳어 있어서
+`gh auth switch` 만으로는 안 풀릴 때가 있다. 이 저장소는 로컬 설정으로 고정해 뒀다:
+
+```bash
+git config --local --replace-all credential.https://github.com.helper '!gh auth git-credential'
+gh auth switch --user SangchoKim
+```
+
+origin URL 에 `https://SangchoKim@github.com/...` 처럼 사용자를 박으면 오히려
+자격증명 조회가 깨진다("Device not configured"). URL 은 그대로 두고 helper 만 지정할 것.
+
+### 매직링크 테스트가 계속 실패할 때
+
+프로덕션은 `max_frequency` 가 **1분**이다(로컬은 1초). 짧은 간격으로 링크를 반복 발급하면
+이전 토큰이 무효화돼서 `otp_expired` 가 난다. 코드 문제로 오해하기 쉽다 — 70초 이상 띄우고 재시도할 것.
