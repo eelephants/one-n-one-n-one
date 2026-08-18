@@ -18,7 +18,9 @@
     "seed-history": "node scripts/seed-history.mjs",
     "test:e2e": "playwright test",
     "check-key-leak": "node scripts/check-key-leak.mjs",
-    "create-owner": "node scripts/create-owner.mjs"
+    "create-owner": "node scripts/create-owner.mjs",
+    "db:push": "node scripts/db-push.mjs",
+    "db:push:api": "node scripts/db-push-api.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.62.1",
