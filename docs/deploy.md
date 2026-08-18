@@ -25,10 +25,31 @@ Authentication → Email Templates 에서 **Magic Link** 와 **Confirm signup** 
 
 (Confirm signup 은 `type=signup`)
 
-### SMTP — 출시 전에 반드시
+### SMTP — 두 가지가 여기 걸려 있다
 
-기본 내장 SMTP 는 **시간당 한 자릿수**로 제한되고 프로덕션용이 아니다. 그대로 두면
-출시일에 매직링크가 조용히 안 가기 시작한다. Authentication → SMTP Settings 에 커스텀 SMTP 를 넣는다.
+기본 제공자 상태에서는 **실측 기준 시간당 2통**(`rate_limit_email_sent = 2`)이고,
+더 중요한 건 **이메일 템플릿 수정 자체가 거부된다**는 것이다:
+
+> Email template modification is not available for free tier projects using the default email provider.
+
+즉 커스텀 SMTP 없이는 `token_hash` 플로우를 쓸 수 없고, `/auth/confirm` 은 죽어 있다.
+(그래서 앱은 `/auth/callback` PKCE 경로도 함께 받는다. 대신 **링크를 연 기기에서만** 로그인된다.)
+
+설정 순서 — 스크립트 두 개로 끝난다:
+
+```bash
+# 1) Resend 등에서 API 키를 받은 뒤 (도메인 인증 전이면 onboarding@resend.dev)
+SMTP_PASS='re_xxxxxxxx' npm run setup-smtp -- onboarding@resend.dev
+
+# 2) SMTP 가 붙은 뒤에야 템플릿이 적용된다
+npm run push-templates
+```
+
+`setup-smtp` 는 발송 제한도 시간당 30통으로 올린다. 다른 공급자는
+`SMTP_HOST` / `SMTP_PORT` / `SMTP_USER` 로 덮어쓴다.
+
+**도메인 인증 전에는 가입한 본인 이메일로만 발송된다.** 지금은 가입이 차단돼 있어 사용자가
+한 명뿐이므로 문제되지 않는다. 사람을 받으려면 도메인 인증이 먼저다.
 
 ### URL 설정
 

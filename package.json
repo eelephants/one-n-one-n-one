@@ -20,7 +20,9 @@
     "check-key-leak": "node scripts/check-key-leak.mjs",
     "create-owner": "node scripts/create-owner.mjs",
     "db:push": "node scripts/db-push.mjs",
-    "db:push:api": "node scripts/db-push-api.mjs"
+    "db:push:api": "node scripts/db-push-api.mjs",
+    "setup-smtp": "node scripts/setup-smtp.mjs",
+    "push-templates": "node scripts/push-templates.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.62.1",
