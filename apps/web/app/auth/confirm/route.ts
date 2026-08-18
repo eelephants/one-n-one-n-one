@@ -23,6 +23,8 @@ export async function GET(request: NextRequest) {
     const { error } = await supabase.auth.verifyOtp({ type, token_hash })
     // redirectUrl 을 쓰는 이유는 그 파일의 주석 참조 — request.url 로 만들면 쿠키가 유실된다.
     if (!error) return NextResponse.redirect(redirectUrl(request, '/'))
+    // 이유를 남긴다. 안 남기면 "링크가 만료됐다"는 화면만 보이고 진짜 원인을 알 수 없다.
+    console.error('verifyOtp failed', { type, status: error.status, code: error.code, message: error.message })
   }
 
   // 만료됐거나 이미 쓴 링크. 이유를 알려준다 — 조용히 폼으로 되돌리면 사용자는 영문을 모른다.
