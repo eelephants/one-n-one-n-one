@@ -19,7 +19,10 @@ function LoginForm() {
     const supabase = createClient()
     const res = await supabase.auth.signInWithOtp({
       email,
-      options: { emailRedirectTo: `${location.origin}/auth/confirm` },
+      // 기본 이메일 템플릿(무료 티어)은 GoTrue /verify 를 거쳐 ?code= 로 여기에 떨어진다.
+      // 커스텀 SMTP 를 붙여 템플릿을 token_hash 로 바꾸면 /auth/confirm 이 받는다.
+      // 두 라우트가 모두 존재하므로 어느 쪽이든 로그인된다.
+      options: { emailRedirectTo: `${location.origin}/auth/callback` },
     })
     setBusy(false)
     if (res.error) {

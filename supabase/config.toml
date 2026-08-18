@@ -156,11 +156,13 @@ max_indexes = 5
 enabled = true
 # The base URL of your website. Used as an allow-list for redirects and for constructing URLs used
 # in emails.
-site_url = "http://127.0.0.1:3100"
+# 로컬은 기본값, `supabase config push` 로 원격에 밀 때는 SITE_URL 로 덮어쓴다.
+# 이렇게 안 하면 프로덕션 URL 을 넣는 순간 로컬 매직링크가 깨진다.
+site_url = "env(SITE_URL)"
 # The public URL that Auth serves on. Defaults to the API external URL with `/auth/v1` appended.
 # external_url = ""
 # A list of *exact* URLs that auth providers are permitted to redirect to post authentication.
-additional_redirect_urls = ["http://127.0.0.1:3100", "http://localhost:3100"]
+additional_redirect_urls = ["env(SITE_URL)", "http://127.0.0.1:3100", "http://localhost:3100"]
 # How long tokens are valid for, in seconds. Defaults to 3600 (1 hour), maximum 604,800 (1 week).
 jwt_expiry = 3600
 # JWT issuer URL. If not set, defaults to auth.external_url.
